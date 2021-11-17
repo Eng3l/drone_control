@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\Annotation\Ignore;
 /**
  * @ORM\Entity(repositoryClass=DroneModelRepository::class)
  * @ApiResource(
- *      itemOperations={"get"={"path"="model/{id}"}},
+ *      itemOperations={"get"={"path"="models/{id}"}},
  *      collectionOperations={"get"}
  * )
  */

@@ -6,6 +6,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 
 use App\Repository\DroneRepository;
+use App\Validator as Validator;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -69,6 +71,7 @@ class Drone
      *     inverseJoinColumns={@ORM\JoinColumn(name="medication_id")}
      * )
      * @ApiSubresource
+     * @Validator\MaxLoad()
      */
     private $payload;
 
