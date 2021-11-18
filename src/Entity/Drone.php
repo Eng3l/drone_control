@@ -25,13 +25,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ApiResource(
         normalizationContext:[
-            'groups' => ['get']
+            'groups' => ['read', 'medications', 'battery']
         ],
         denormalizationContext:[
-            'groups' => ['post']
+            'groups' => ['post', 'medications', 'state']
         ],
         itemOperations:[
-            'get', 'delete',
+            'get' => [
+                'denormalization_context' => ['groups' => 'read'],
+            ], 
+            'delete',
             'load' => [
                 'summary' => 'Tries to load a drone with medications',
                 'method' => 'POST',
@@ -45,6 +48,26 @@ use Symfony\Component\Validator\Constraints as Assert;
                 'path' => '/drones/{serial}/state',
                 'controller' => \App\Controller\DroneStateController::class,
                 'denormalization_context' => ['groups' => 'state'],
+            ],
+            'battery' => [
+                'summary' => 'Retrieves information about a drone battery',
+                'method' => 'GET',
+                'path' => '/drones/{serial}/battery',
+                'normalizationContext' => ['groups' => ['battery']],
+            ],
+            'medications' => [
+                'summary' => 'Retrieves information about a drone load',
+                'method' => 'GET',
+                'path' => '/drones/{serial}/load',
+                'normalizationContext' => ['groups' => ['medications']],
+            ]
+        ],
+        collectionOperations: [
+            'get', 'post',
+            'available' => [
+                'method' => 'GET',
+                'path' => '/drones/availables',
+                'controller' => \App\Controller\DroneAvailableController::class,
             ]
         ]
     )
@@ -59,7 +82,7 @@ class Drone
      *      max = 100,
      *      maxMessage = "Drone serial number must be not larger that 100 characters"
      * )
-     * @Groups({"get", "post"})
+     * @Groups({"read", "post", "medications", "battery"})
      */
     private $serial;
 
@@ -67,7 +90,7 @@ class Drone
      * @ORM\Column(type="float")
      * @Assert\LessThanOrEqual(500)
      * @Assert\Positive
-     * @Groups({"get", "post"})
+     * @Groups({"read", "post"})
      */
     private $weight;
 
@@ -75,7 +98,7 @@ class Drone
      * @ORM\Column(type="integer")
      * @Assert\LessThanOrEqual(100)
      * @Assert\Positive
-     * @Groups({"get", "post"})
+     * @Groups({"read", "post", "battery"})
      */
     private $battery;
 
@@ -83,7 +106,7 @@ class Drone
      * @ORM\ManyToOne(targetEntity=DroneModel::class, inversedBy="drones")
      * @ORM\JoinColumn(nullable=false)
      * @ApiSubresource
-     * @Groups({"get", "post"})
+     * @Groups({"read", "post"})
      */
     private $model;
 
@@ -91,7 +114,7 @@ class Drone
      * @ORM\ManyToOne(targetEntity=DroneState::class, inversedBy="drones")
      * @ORM\JoinColumn(nullable=false)
      * @ApiSubresource
-     * @Groups({"get", "state"})
+     * @Groups({"read", "state"})
      */
     private $state;
 
@@ -103,7 +126,7 @@ class Drone
      * )
      * @ApiSubresource
      * @Validator\MaxLoad()
-     * @Groups({"get", "load"})
+     * @Groups({"read", "load", "medications"})
      */
     private $payload;
 

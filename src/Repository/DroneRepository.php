@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Drone;
+use App\Entity\DroneState;
+
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,37 +16,24 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class DroneRepository extends ServiceEntityRepository
 {
+    const ITEMS_PER_PAGE = 50;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Drone::class);
     }
 
-    // /**
-    //  * @return Drone[] Returns an array of Drone objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getDronesByAvailability($page)
     {
+        $first = ($page - 1) * self::ITEMS_PER_PAGE;
+
         return $this->createQueryBuilder('d')
-            ->andWhere('d.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('d.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere('d.state <= :state')
+            ->setParameter('state', DroneState::LOADING)
+            ->setFirstResult($first)
+            ->setMaxResults(self::ITEMS_PER_PAGE)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Drone
-    {
-        return $this->createQueryBuilder('d')
-            ->andWhere('d.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

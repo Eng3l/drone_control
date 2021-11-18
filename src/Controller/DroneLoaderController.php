@@ -33,7 +33,16 @@ class DroneLoaderController extends AbstractController
         else if ($data->getState()->getId() > DroneState::LOADING) {
             throw new BadRequestException('This drone is not available for loading');
         }
-        $data->setState($this->stateRepo->find(DroneState::LOADING));
+        $sum = 0;
+        foreach ($data->getPayload() as $load) {
+            $sum += $load->getWeight();
+        }
+        
+        if ($sum == $data->getWeight()) {
+            $data->setState($this->stateRepo->find(DroneState::LOADED));
+        } else {
+            $data->setState($this->stateRepo->find(DroneState::LOADING));
+        }
 
         return $data;
     }
