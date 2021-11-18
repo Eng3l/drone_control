@@ -38,6 +38,13 @@ use Symfony\Component\Validator\Constraints as Assert;
                 'path' => '/drones/{serial}/load',
                 'controller' => \App\Controller\DroneLoaderController::class,
                 'denormalization_context' => ['groups' => 'load'],
+            ],
+            'state' => [
+                'summary' => 'Changes the Drone state',
+                'method' => 'POST',
+                'path' => '/drones/{serial}/state',
+                'controller' => \App\Controller\DroneStateController::class,
+                'denormalization_context' => ['groups' => 'state'],
             ]
         ]
     )
@@ -84,7 +91,7 @@ class Drone
      * @ORM\ManyToOne(targetEntity=DroneState::class, inversedBy="drones")
      * @ORM\JoinColumn(nullable=false)
      * @ApiSubresource
-     * @Groups({"get"})
+     * @Groups({"get", "state"})
      */
     private $state;
 
@@ -187,5 +194,17 @@ class Drone
         $this->payload->removeElement($payload);
 
         return $this;
+    }
+
+    public function clearPayload(): self
+    {
+        $this->payload->clear();
+
+        return $this;
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->payload->isEmpty();
     }
 }

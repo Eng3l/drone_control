@@ -10,6 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 
+/**
+ * Unsures that a drone can't be loaded if its battery is below 25%
+ * and it's state is IDLE or LOADING
+ */
 #[AsController]
 class DroneLoaderController extends AbstractController
 {
@@ -25,6 +29,9 @@ class DroneLoaderController extends AbstractController
     {
         if ($data->getBattery() < 25) {
             throw new BadRequestException('Low level battery.');
+        }
+        else if ($data->getState()->getId() > DroneState::LOADING) {
+            throw new BadRequestException('This drone is not available for loading');
         }
         $data->setState($this->stateRepo->find(DroneState::LOADING));
 
