@@ -20,6 +20,14 @@ use Symfony\Component\Serializer\Annotation\Ignore;
  */
 class DroneState
 {
+
+    const IDLE          = 1;
+    const LOADING       = 2;
+    const LOADED        = 3;
+    const DELIVERING    = 4;
+    const DELIVERED     = 5;
+    const RETURNING     = 6;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

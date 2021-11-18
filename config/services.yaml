@@ -21,5 +21,10 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
+    App\EventListener\DroneStateCreate:
+        tags:
+            - { name: 'doctrine.event_listener', event: 'prePersist' }
+                
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

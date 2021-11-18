@@ -13,16 +13,35 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
- * @ApiResource(
- *      itemOperations={"get", "delete"}
- * )
+ * 
  * @ORM\Entity(repositoryClass=DroneRepository::class)
  * @UniqueEntity("serial", message="There is a Drone with this serial number")
  */
+#[
+    ApiResource(
+        normalizationContext:[
+            'groups' => ['get']
+        ],
+        denormalizationContext:[
+            'groups' => ['post']
+        ],
+        itemOperations:[
+            'get', 'delete',
+            'load' => [
+                'summary' => 'Tries to load a drone with medications',
+                'method' => 'POST',
+                'path' => '/drones/{serial}/load',
+                'controller' => \App\Controller\DroneLoaderController::class,
+                'denormalization_context' => ['groups' => 'load'],
+            ]
+        ]
+    )
+]
 class Drone
 {
     /**
@@ -33,6 +52,7 @@ class Drone
      *      max = 100,
      *      maxMessage = "Drone serial number must be not larger that 100 characters"
      * )
+     * @Groups({"get", "post"})
      */
     private $serial;
 
@@ -40,6 +60,7 @@ class Drone
      * @ORM\Column(type="float")
      * @Assert\LessThanOrEqual(500)
      * @Assert\Positive
+     * @Groups({"get", "post"})
      */
     private $weight;
 
@@ -47,6 +68,7 @@ class Drone
      * @ORM\Column(type="integer")
      * @Assert\LessThanOrEqual(100)
      * @Assert\Positive
+     * @Groups({"get", "post"})
      */
     private $battery;
 
@@ -54,6 +76,7 @@ class Drone
      * @ORM\ManyToOne(targetEntity=DroneModel::class, inversedBy="drones")
      * @ORM\JoinColumn(nullable=false)
      * @ApiSubresource
+     * @Groups({"get", "post"})
      */
     private $model;
 
@@ -61,6 +84,7 @@ class Drone
      * @ORM\ManyToOne(targetEntity=DroneState::class, inversedBy="drones")
      * @ORM\JoinColumn(nullable=false)
      * @ApiSubresource
+     * @Groups({"get"})
      */
     private $state;
 
@@ -72,6 +96,7 @@ class Drone
      * )
      * @ApiSubresource
      * @Validator\MaxLoad()
+     * @Groups({"get", "load"})
      */
     private $payload;
 
