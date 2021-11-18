@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\MedicationRepository;
 
@@ -12,13 +13,57 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
+use Symfony\Component\Serializer\Annotation\Ignore;
+
 /**
- * @ApiResource(
- *      itemOperations={"get", "delete"}
- * )
  * @ORM\Entity(repositoryClass=MedicationRepository::class)
  * @UniqueEntity("code", message="There is a Medication with that code")
  */
+#[ApiResource(
+    itemOperations: ['get', 'delete'],
+    collectionOperations: [
+        'get',
+        'post' => [
+            'controller' => \App\Controller\MedicationController::class,
+            'deserialize' => false,
+            'openapi_context' => [
+                'summary' => 'Creates a new Medication with image',
+                'requestBody' => [
+                    'required' => true,
+                    'content' => [
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'name' => [
+                                        'description' => 'Name of the medication',
+                                        'type' => 'string',
+                                        'example' => 'Aspirine'
+                                    ],
+                                    'weight' => [
+                                        'description' => 'Weight of the medication',
+                                        'type' => 'float',
+                                        'example' => '10.0'
+                                    ],
+                                    'code' => [
+                                        'description' => 'Code of the medication',
+                                        'type' => 'string',
+                                        'example' => 'AABBCC11'
+                                    ],
+                                    'image' => [
+                                        'description' => 'A picture of the medication',
+                                        'type' => 'string',
+                                        'format' => 'binary'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+)]
 class Medication
 {
     /**
@@ -50,6 +95,14 @@ class Medication
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @ApiProperty(
+     *   iri="http://schema.org/image",
+     *   attributes={
+     *     "openapi_context"={
+     *       "type"="string",
+     *     }
+     *   }
+     * )
      */
     private $image;
 
@@ -59,6 +112,7 @@ class Medication
      *     joinColumns={@ORM\JoinColumn(name="medication_id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="drone_serial", referencedColumnName="serial")}
      * )
+     * @Ignore
      */
     private $drones;
 
