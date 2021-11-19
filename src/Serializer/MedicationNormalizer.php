@@ -7,7 +7,10 @@ use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 use App\Service\FileUploader;
 use App\Entity\Medication;
- 
+
+/**
+ * Add the URL prefix to Medications image.
+ */
 final class MedicationNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
 {
     use NormalizerAwareTrait;

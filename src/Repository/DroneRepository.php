@@ -29,6 +29,7 @@ class DroneRepository extends ServiceEntityRepository
 
         return $this->createQueryBuilder('d')
             ->andWhere('d.state <= :state')
+            ->andWhere('d.battery > 25')
             ->setParameter('state', DroneState::LOADING)
             ->setFirstResult($first)
             ->setMaxResults(self::ITEMS_PER_PAGE)

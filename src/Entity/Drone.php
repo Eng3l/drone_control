@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -24,47 +25,60 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[
     ApiResource(
-        normalizationContext:[
-            'groups' => ['read', 'medications', 'battery']
-        ],
         denormalizationContext:[
             'groups' => ['post', 'medications', 'state']
         ],
         itemOperations:[
             'get' => [
-                'denormalization_context' => ['groups' => 'read'],
+                'normalization_context' => ['groups' => 'read'],
             ], 
             'delete',
             'load' => [
-                'summary' => 'Tries to load a drone with medications',
+                'openapi_context' => [
+                    'summary' => 'Tries to load a drone with medications.',
+                    'description' => 'Add medications to a drone. The state will be changed to Loading or Loaded.'
+                ],
                 'method' => 'POST',
                 'path' => '/drones/{serial}/load',
                 'controller' => \App\Controller\DroneLoaderController::class,
                 'denormalization_context' => ['groups' => 'load'],
             ],
             'state' => [
-                'summary' => 'Changes the Drone state',
+                'openapi_context' => [
+                    'summary' => 'Changes the Drone state.',
+                    'description' => 'Note that there are rules that must be followed.'
+                ],
                 'method' => 'POST',
                 'path' => '/drones/{serial}/state',
                 'controller' => \App\Controller\DroneStateController::class,
                 'denormalization_context' => ['groups' => 'state'],
             ],
             'battery' => [
-                'summary' => 'Retrieves information about a drone battery',
+                'openapi_context' => [
+                    'summary' => 'Retrieves information about a drone battery.',
+                    'description' => 'List of Drones along with their battery usage.'
+                ],
                 'method' => 'GET',
                 'path' => '/drones/{serial}/battery',
-                'normalizationContext' => ['groups' => ['battery']],
+                'normalization_context' => ['groups' => 'battery'],
             ],
             'medications' => [
-                'summary' => 'Retrieves information about a drone load',
+                'openapi_context' => [
+                    'summary' => 'Retrieves information about a drone load.',
+                    'description' => 'Details of a Drone load.'
+                ],
                 'method' => 'GET',
                 'path' => '/drones/{serial}/load',
-                'normalizationContext' => ['groups' => ['medications']],
+                'normalization_context' => ['groups' => 'medications'],
             ]
         ],
         collectionOperations: [
             'get', 'post',
             'available' => [
+                'openapi_context' => [
+                    'summary' => 'List all drones ready to be loaded.',
+                    'description' => 'Their states must be in idle or loading.'
+                ],
                 'method' => 'GET',
                 'path' => '/drones/availables',
                 'controller' => \App\Controller\DroneAvailableController::class,
@@ -226,6 +240,7 @@ class Drone
         return $this;
     }
 
+    #[Ignore()]
     public function isEmpty(): bool
     {
         return $this->payload->isEmpty();
