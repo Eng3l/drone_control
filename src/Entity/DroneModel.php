@@ -13,11 +13,21 @@ use Symfony\Component\Serializer\Annotation\Ignore;
 
 /**
  * @ORM\Entity(repositoryClass=DroneModelRepository::class)
- * @ApiResource(
- *      itemOperations={"get"={"path"="models/{id}"}},
- *      collectionOperations={"get"}
- * )
  */
+#[ApiResource(
+    shortName: 'Models of drone',
+    description: 'Available models of drone',
+    itemOperations: [
+        'get' => [
+            'path' => 'models/{id}'
+        ]
+    ],
+    collectionOperations: [
+        'get' => [
+            'path' => 'models'
+        ]
+    ]
+)]
 class DroneModel
 {
 

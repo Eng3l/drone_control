@@ -15,10 +15,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass=BatteryLogRepository::class)
  */
 #[ApiResource(
-    itemOperations: ['get'],
+    shortName: 'Drone batteries log',
+    description: 'Log with drone\'s batteries levels at some point.',
+    itemOperations: [
+        'get' => [
+            'path' => '/battery_logs/{id}',
+        ]
+    ],
     collectionOperations: [
         'get' => [
             'normalization_context' => ['groups' => 'create'],
+            'path' => '/battery_logs'
         ],
         'post' => [
             'openapi_context' => [

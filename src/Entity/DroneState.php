@@ -18,6 +18,20 @@ use Symfony\Component\Serializer\Annotation\Ignore;
  *      collectionOperations={"get"}
  * )
  */
+#[ApiResource(
+    shortName: 'States of drone',
+    description: 'Differents states of a drone',
+    itemOperations: [
+        'get' => [
+            'path' => 'states/{id}'
+        ]
+    ],
+    collectionOperations: [
+        'get' => [
+            'path' => 'states'
+        ]
+    ]
+)]
 class DroneState
 {
 

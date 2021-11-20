@@ -13,12 +13,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass=LogEntryRepository::class)
  */
 #[ApiResource(
+    shortName: 'Batteries log entry',
     itemOperations: [
         'get' => [
             'normalization_context' => ['groups' => 'read'],
+            'path' => '/log_entries/{id}'
         ]
     ],
-    collectionOperations: ['get']
+    collectionOperations: [
+        'get' => [
+            'path' => '/log_entries'
+        ]
+    ]
 )]
 class LogEntry
 {

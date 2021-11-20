@@ -17,7 +17,10 @@ Relation of actions and its endpoints.
 
 * Body request should be as a *multipart/form-data*.
 
-Documentatation of all endpoints can be found at `/api`.
+Documentation of all endpoints can be found at `/api`.
+
+> NOTE: To get all schema and resources IRI must add `accept: application/ld+json` to request's
+> headers.
 
 ## Assumptions 
 
