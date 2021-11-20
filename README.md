@@ -46,3 +46,24 @@ docker-compose up -d
 
 The system is loaded with predefined data (states and model), drones
 and medications must be created using endpoint described above.
+
+## Periodical tasks
+
+As PHP doesn't allow to be running on threads periodical tasks must be
+done with a third party tool. In the case `cron` is proposed.
+
+As the system runs in docker execution of the task can be done as follow:
+
+```bash
+cd docker
+# verbose output
+docker-compose exec \
+    php-fpm bin/console app:drone-battery
+# quiet output
+docker-compose exec \
+    php-fpm bin/console -q app:drone-battery
+```
+
+If verbose option is used along the created log it will display all the
+information in terminal.
+
